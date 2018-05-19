@@ -1,0 +1,34 @@
+{
+  "name": "pumpbot",
+  "version": "1.0.0",
+  "description": "Slack reminders to pump while at work.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precommit": "lint-staged"
+  },
+  "author": "Katy DeCorah",
+  "license": "MIT",
+  "lint-staged": {
+    "**/*.js": [
+      "eslint",
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "dotenv": "^5.0.1",
+    "eslint": "^4.19.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.1",
+    "prettier": "^1.12.1"
+  },
+  "dependencies": {
+    "dropbox": "^4.0.5",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "bin": {
+    "pumpbot": "./bin/pumpbot.js"
+  }
+}

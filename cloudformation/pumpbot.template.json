@@ -1,0 +1,149 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "GitSha": {
+      "Type": "String",
+      "Description": "GitSha to deploy"
+    },
+    "SlackChannel": {
+      "Type": "String",
+      "Description": "Slack channel for posting the message.",
+      "Default": "#general"
+    },
+    "SlackHookURL": {
+      "Type": "String",
+      "Description": "Webhook URL to which to post the messages"
+    },
+    "DropboxAccessToken": {
+      "Type": "String",
+      "Description": "Dropbox access token"
+    }
+  },
+  "Resources": {
+    "PumpBotRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/pumpbot/",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "CloudWatch",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:*"
+                  ],
+                  "Resource": "arn:aws:logs:*:*:*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "PumpBotFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Join": [
+              "",
+              [
+                "kdecorah-",
+                {
+                  "Ref": "AWS::Region"
+                }
+              ]
+            ]
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                "pumpbot/",
+                {
+                  "Ref": "GitSha"
+                },
+                ".zip"
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "PumpBotRole",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "SlackChannel": {
+              "Ref": "SlackChannel"
+            },
+            "DropboxAccessToken": {
+              "Ref": "DropboxAccessToken"
+            },
+            "SlackHookURL": {
+              "Ref": "SlackHookURL"
+            }
+          }
+        },
+        "Description": "Slack reminders to pump while at work.",
+        "Handler": "index.reminder",
+        "MemorySize": 128,
+        "Runtime": "nodejs6.10",
+        "Timeout": 300
+      }
+    },
+    "TriggerPumpBotFunctionEveryDay": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "9:30 am, 12:30 pm, 3:30 pm Monday-Friday",
+        "ScheduleExpression": "cron(30 14,17,20 ? * MON-FRI *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "PumpBotFunction",
+                "Arn"
+              ]
+            },
+            "Id": "TriggerPumpBotFunctionEveryDay"
+          }
+        ]
+      }
+    },
+    "TriggerPumpBotFunctionEveryDayPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PumpBotFunction",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "TriggerPumpBotFunctionEveryDay",
+            "Arn"
+          ]
+        }
+      }
+    }
+  }
+}
