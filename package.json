@@ -22,7 +22,7 @@
     "eslint": "^4.19.1",
     "husky": "^0.14.3",
     "lint-staged": "^7.1.1",
-    "prettier": "^1.12.1"
+    "prettier": "^1.13.7"
   },
   "dependencies": {
     "dropbox": "^4.0.5",
