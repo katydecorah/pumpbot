@@ -111,7 +111,7 @@
       "Type": "AWS::Events::Rule",
       "Properties": {
         "Description": "9:30 am, 12:30 pm, 3:30 pm Monday-Friday",
-        "ScheduleExpression": "cron(30 14,17,20 ? * MON-FRI *)",
+        "ScheduleExpression": "cron(30 15,18,21 ? * MON-FRI *)",
         "State": "ENABLED",
         "Targets": [
           {
