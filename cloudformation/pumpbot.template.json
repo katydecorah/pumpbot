@@ -103,7 +103,7 @@
         "Description": "Slack reminders to pump while at work.",
         "Handler": "index.reminder",
         "MemorySize": 128,
-        "Runtime": "nodejs6.10",
+        "Runtime": "nodejs8.10",
         "Timeout": 300
       }
     },
