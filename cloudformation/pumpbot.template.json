@@ -110,8 +110,8 @@
     "TriggerPumpBotFunctionEveryDay": {
       "Type": "AWS::Events::Rule",
       "Properties": {
-        "Description": "9:30 am, 12:30 pm, 3:30 pm Monday-Friday",
-        "ScheduleExpression": "cron(30 15,18,21 ? * MON-FRI *)",
+        "Description": "Noon Monday-Friday",
+        "ScheduleExpression": "cron(0 16 ? * MON-FRI *)",
         "State": "ENABLED",
         "Targets": [
           {

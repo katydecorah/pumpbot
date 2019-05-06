@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "dropbox": "^4.0.5",
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "request": "^2.88.0"
   },
   "bin": {
     "pumpbot": "./bin/pumpbot.js"
